@@ -1,0 +1,28 @@
+<!-- contacto-modal.component.html -->
+<div class="fixed inset-0 flex items-center justify-center z-50" style="background-color: rgba(0, 0, 0, 0.50);">
+  <div class="bg-white p-6 rounded-lg w-1/3">
+    <h2 class="text-2xl font-bold mb-4">Información de la empresa</h2>
+    <form (ngSubmit)="onSubmit()">
+      <div class="mb-4">
+        <label class="block text-sm font-bold mb-2">Nombre de la Empresa:</label>
+        <input type="text" class="w-full p-2 border rounded" [(ngModel)]="empresa.nombre" name="nombre">
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-bold mb-2">Número de Teléfono:</label>
+        <input type="text" class="w-full p-2 border rounded" [(ngModel)]="empresa.telefono" name="telefono">
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-bold mb-2">Correo:</label>
+        <input type="email" class="w-full p-2 border rounded" [(ngModel)]="empresa.correo" name="correo">
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-bold mb-2">Dirección:</label>
+        <input type="text" class="w-full p-2 border rounded" [(ngModel)]="empresa.direccion" name="direccion">
+      </div>
+      <div class="flex justify-end">
+        <button type="button" (click)="closeModal()" class="bg-gray-500 text-white px-4 py-2 rounded mr-2">Cancelar</button>
+        <button type="submit" class="bg-[#c62828] text-white px-4 py-2 rounded">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>

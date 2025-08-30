@@ -1,0 +1,128 @@
+<div class="p-6">
+  <!-- Filtros -->
+  <div class="mb-4">
+    <div class="flex flex-col md:flex-row md:items-center md:gap-4 gap-4">
+      
+      <!-- Buscador -->
+      <div class="relative w-full max-w-xs">
+        <input
+          type="text"
+          placeholder="Buscar por nombre, apellido o correo"
+          [(ngModel)]="filtroUsuario"
+          (ngModelChange)="buscarUsuario()"
+          class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+        />
+        <i class="fas fa-search absolute left-3 top-2.5 text-gray-400"></i>
+      </div>
+
+      <!-- Filtros por fecha -->
+      <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+        <input
+          type="date"
+          [(ngModel)]="fechaInicio"
+          class="px-3 py-2 border border-gray-300 rounded-lg bg-white"
+        />
+        <input
+          type="date"
+          [(ngModel)]="fechaFin"
+          class="px-3 py-2 border border-gray-300 rounded-lg bg-white"
+        />
+
+        <button
+          (click)="filtrarPorFecha()"
+          class="bg-VerdeOscuro text-white px-4 py-2 rounded-lg transition-colors duration-200 hover:bg-Verde" >
+          <i class="fas fa-filter mr-1"></i>
+          Filtrar
+        </button>
+
+        <button
+          (click)="limpiarFiltros()"
+          class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg"
+        >
+          <i class="fas fa-eraser"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reporte -->
+  <div id="reporteUsuarios" class="bg-white p-4 rounded-lg">
+    <!-- Encabezado -->
+    <div class="border-2 border-Verde p-6 text-center rounded-md shadow-[0_8px_30px_rgba(0,0,0,0.15)]">
+      <h1 class="text-2xl font-bold text-green-900 mb-4">REPORTE DE USUARIOS</h1>
+
+      <div class="flex justify-center">
+        <img
+          src="../../../../assets/imagenes/ImagenMenu.png"
+          alt="Logo Keytelin"
+          class="h-32 w-auto" />
+      </div>
+
+      <div class="flex justify-between mt-4 text-left text-sm">
+        <div>
+          <p><strong>Teléfono:</strong> {{ empresa?.telefono }}</p>
+          <p><strong>Email:</strong> {{ empresa?.correo }}</p>
+          <p><strong>Dirección:</strong> {{ empresa?.direccion }}</p>
+        </div>
+        <div>
+          <p><strong>Mes y Año:</strong> {{ reportMonth }}</p>
+          <p><strong>Día y hora de emisión:</strong> {{ reportDate }}</p>
+          <p><strong>Realizado por:</strong> {{ reportUser }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla -->
+    <table class="w-full mt-6 border-t border-gray-300 border-collapse">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="px-4 py-2 text-left text-sm font-semibold">ID</th>
+          <th class="px-4 py-2 text-left text-sm font-semibold">Email</th>
+          <th class="px-4 py-2 text-left text-sm font-semibold">Nombre</th>
+          <th class="px-4 py-2 text-left text-sm font-semibold">Apellido</th>
+          <th class="px-4 py-2 text-left text-sm font-semibold">Estado</th>
+          <th class="px-4 py-2 text-left text-sm font-semibold">Inicio Sesión</th>
+          <th class="px-4 py-2 text-left text-sm font-semibold">Fecha creación</th>
+          <th class="px-4 py-2 text-left text-sm font-semibold">Rol</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let usuario of usuariosPaginados()"
+          class="hover:bg-gray-50 transition-colors duration-150"
+        >
+          <td class="px-4 py-2 text-sm">{{ usuario.id }}</td>
+          <td class="px-4 py-2 text-sm">{{ usuario.correo }}</td>
+          <td class="px-4 py-2 text-sm">{{ usuario.nombre }}</td>
+          <td class="px-4 py-2 text-sm">{{ usuario.apellido }}</td>
+          <td class="px-4 py-2">
+            <span
+              class="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
+              [ngClass]="{
+                'bg-green-100 text-green-800': usuario.estado === 'Activo',
+                'bg-red-100 text-red-800': usuario.estado === 'Inactivo',
+                'bg-yellow-100 text-yellow-800': usuario.estado !== 'Activo' && usuario.estado !== 'Inactivo'
+              }"
+            >
+              {{ usuario.estado }}
+            </span>
+          </td>
+          <td class="px-4 py-2 text-sm">{{ usuario.ultimoInicioSesion | date:'dd/MM/yyyy' }}</td>
+          <td class="px-4 py-2 text-sm">{{ usuario.fechaCreacion | date:'dd/MM/yyyy' }}</td>
+          <td class="px-4 py-2 text-sm">{{ usuario.rol }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Botón exportar -->
+  <div class="mt-4 text-right">
+    <button
+      (click)="exportarPDFFrontend()"
+      class="bg-Verde hover:bg-VerdeClaro text-white px-4 py-2 rounded-md">
+      <i class="fas fa-file-pdf mr-2"></i>
+      Exportar PDF
+    </button>
+  </div>
+</div>
+

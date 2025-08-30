@@ -1,0 +1,132 @@
+<div class="min-h-screen flex items-center justify-center bg-[linear-gradient(to_bottom,_#65BD4A_0%,_#E1EEDD0D_47%,_#65BD4A_100%)]">
+  <div class="w-full max-w-6xl flex flex-col md:flex-row items-center justify-between px-4 md:px-12 py-12">
+
+    <!-- Formulario de inicio de sesión -->
+    <div class="w-full md:w-1/2 max-w-md space-y-6">
+      <h1 class="text-2xl font-bold text-green-800 text-center">Electrónica Deny</h1>
+
+      
+      <form class="w-full space-y-4" (ngSubmit)="login()">
+        <!-- Campo correo -->
+        <div class="relative">
+          <input type="email" [(ngModel)]="email" name="email" placeholder="Correo electrónico"
+            class="pl-10 pr-4 py-2 w-full rounded-full border border-green-500 focus:outline-none focus:ring-2 focus:ring-green-700"
+            [ngClass]="{'border-red-500': emailInvalid}" required>
+          <span class="absolute left-3 top-2.5 text-gray-700">📧</span>
+          <p *ngIf="emailInvalid" class="text-red-500 text-xs mt-1">Correo electrónico requerido</p>
+        </div>
+
+        <!-- Campo contraseña -->
+        <div class="relative">
+          <input [type]="passwordType" [(ngModel)]="password" name="password" placeholder="••••••"
+            class="pl-10 pr-10 py-2 w-full rounded-full border border-green-500 focus:outline-none focus:ring-2 focus:ring-green-700"
+            [ngClass]="{'border-red-500': passwordInvalid}" required>
+          <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-black cursor-pointer"
+            (click)="togglePasswordVisibility()">
+            {{ passwordType === 'password' ? '👁️' : '🙈' }}
+          </span>
+          <p *ngIf="passwordInvalid" class="text-red-500 text-xs mt-1">Contraseña requerida</p>
+        </div>
+
+        <!-- Mensaje de error -->
+        <p *ngIf="errorMessage" class="text-red-500 text-sm text-center">{{ errorMessage }}</p>
+
+        <!-- Botón ingresar -->
+        <button type="submit"
+          class="bg-green-800 text-white font-semibold px-6 py-2 rounded-full hover:bg-green-700 w-full">
+          INGRESAR
+        </button>
+      </form>
+
+      <!-- Olvidó contraseña -->
+      <p class="text-center text-sm text-green-700 hover:underline cursor-pointer mt-4">
+        <button type="button" class="text-green-700 hover:underline" (click)="abrirModal()">¿Olvidaste tu contraseña?</button>
+      </p>
+    </div>
+
+    <!-- Imagen del robot -->
+    <div class="hidden md:block md:w-1/2">
+      <img src="assets/imagenes/RobotDeny.png" alt="robot" class="w-90 mx-auto">
+    </div>
+  </div>
+</div>
+
+
+<!-- ================= MODAL RECUPERAR CONTRASEÑA ================= -->
+<div *ngIf="mostrarModal" 
+     class="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md bg-white/10"
+     (click)="cerrarModal()">
+
+  <!-- Contenido del modal -->
+  <div class="bg-white rounded-xl p-6 w-full max-w-md shadow-lg relative mx-4" 
+       (click)="$event.stopPropagation()">
+
+    <!-- Botón X para cerrar -->
+    <button type="button" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700" (click)="cerrarModal()">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+    
+    <h2 class="text-xl font-semibold mb-6 text-center">Recuperar contraseña</h2>
+
+    <!-- Paso 1: Ingresar correo -->
+    <div *ngIf="pasoActual === 1" class="space-y-4">
+      <div>
+        <label class="block mb-2 text-sm font-medium text-gray-700">Correo electrónico</label>
+        <input [(ngModel)]="correoRecuperar" type="email" name="correoRecuperar" 
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-600" 
+          placeholder="ejemplo@correo.com" />
+      </div>
+      <div class="mt-6 flex justify-end gap-2">
+        <button class="px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors" (click)="cerrarModal()">Cancelar</button>
+        <button class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors" (click)="enviarCodigo()">Enviar código</button>
+      </div>
+    </div>
+
+    <!-- Paso 2: Verificar código -->
+    <div *ngIf="pasoActual === 2" class="space-y-4">
+      <p class="mb-4 text-gray-600">Se ha enviado un código de verificación a tu correo electrónico.</p>
+      <div>
+        <label class="block mb-2 text-sm font-medium text-gray-700">Código de verificación</label>
+        <input [(ngModel)]="codigoVerificacion" type="text" name="codigoVerificacion" 
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-600" 
+          placeholder="Ingresa el código de 6 dígitos" />
+      </div>
+      <div class="mt-6 flex justify-end gap-2">
+        <button class="px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors" (click)="pasoActual = 1">Atrás</button>
+        <button class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors" (click)="verificarCodigo()">Verificar código</button>
+      </div>
+    </div>
+
+    <!-- Paso 3: Nueva contraseña -->
+    <div *ngIf="pasoActual === 3" class="space-y-4">
+      <!-- Nueva contraseña -->
+      <div class="relative">
+        <label class="block mb-2 text-sm font-medium text-gray-700">Nueva contraseña</label>
+        <input [type]="newPasswordType" [(ngModel)]="nuevaContrasena" name="nuevaContrasena" 
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-600 pr-10" 
+          placeholder="Ingresa tu nueva contraseña" />
+        <span class="absolute right-3 bottom-2 text-gray-500 cursor-pointer" (click)="toggleNewPasswordVisibility()">
+          {{ newPasswordType === 'password' ? '👁️' : '🙈' }}
+        </span>
+      </div>
+
+      <!-- Confirmar contraseña -->
+      <div class="relative">
+        <label class="block mb-2 text-sm font-medium text-gray-700">Confirmar contraseña</label>
+        <input [type]="confirmPasswordType" [(ngModel)]="confirmarContrasena" name="confirmarContrasena" 
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-600 pr-10" 
+          placeholder="Confirma tu nueva contraseña" />
+        <span class="absolute right-3 bottom-2 text-gray-500 cursor-pointer" (click)="toggleConfirmPasswordVisibility()">
+          {{ confirmPasswordType === 'password' ? '👁️' : '🙈' }}
+        </span>
+      </div>
+
+      <div class="mt-6 flex justify-end gap-2">
+        <button class="px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors" (click)="pasoActual = 2">Atrás</button>
+        <button class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors" (click)="cambiarContrasena()">Cambiar contraseña</button>
+      </div>
+    </div>
+  </div>
+</div>

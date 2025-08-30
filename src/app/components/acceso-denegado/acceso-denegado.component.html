@@ -1,0 +1,14 @@
+<!-- Fondo semitransparente -->
+<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+  <!-- Tarjeta -->
+  <div class="bg-white shadow-lg rounded-2xl p-8 max-w-md text-center">
+    <h1 class="text-3xl font-bold text-red-600 mb-4">Acceso Denegado</h1>
+    <p class="text-gray-700 mb-6">No tienes permisos para acceder a esta sección.</p>
+    <button 
+      (click)="volverAlInicio()"
+      class="px-6 py-2 bg-VerdeOscuro text-white font-semibold rounded-lg shadow hover:bg-Verde transition"
+    >
+      Volver al inicio
+    </button>
+  </div>
+</div>

@@ -1,0 +1,168 @@
+<div class="p-4  ">
+  <div class="flex justify-between items-center mb-4">
+    <div></div>
+    <h2 class="text-2xl font-semibold">Módulo de Usuarios</h2>
+  </div>
+
+  <div class="flex flex-col gap-4 mb-6">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 w-full">
+      <div class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+
+        <!-- Buscador -->
+        <div class="relative flex-grow">
+        <input type="text" placeholder="Buscar por nombre, apellido o correo"
+              class="w-full pl-10 pr-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500"
+              [(ngModel)]="filtroUsuario"
+              (ngModelChange)="buscarUsuario()" 
+              (keyup.enter)="buscarUsuario()" />
+        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+      </div>
+
+        <!-- Filtro por estado -->
+        <div class="relative w-full md:w-auto">
+          <select [(ngModel)]="filtroEstado" (change)="buscarUsuario()"
+            class="border rounded-lg p-2 bg-white w-full md:w-auto">
+            <option value="todos">Todos</option>
+            <option value="activos">Activos</option>
+            <option value="inactivos">Inactivos</option>
+          </select>
+        </div>
+
+        <!-- Filtros por fecha -->
+        <div class="flex flex-col sm:flex-row gap-2">
+          <div class="relative">
+            <input type="date" class="border rounded-lg p-2 bg-white w-full" [(ngModel)]="fechaInicio" />
+          </div>
+          <div class="relative">
+            <input type="date" class="border rounded-lg p-2 bg-white w-full" [(ngModel)]="fechaFin" />
+          </div>
+          <button (click)="filtrarPorFecha()"
+            class="bg-VerdeOscuro hover:bg-Verde text-white px-4 py-2 rounded-lg transition-colors duration-200">
+            <i class="fas fa-filter mr-2"></i>
+            Filtrar
+          </button>
+        </div>
+        <button 
+          (click)="limpiarFiltros()" 
+          class="bg-VerdeOscuro text-white px-4 py-2 rounded-md hover:bg-Verde transition duration-200 flex items-center gap-2"
+        >
+          <i class="fas fa-eraser"></i> 
+          <span class="hidden sm:inline"></span>
+        </button>
+      </div>
+    </div>
+
+
+    <div class="flex items-center">
+      <button class="bg-VerdeOscuro hover:bg-Verde text-white px-4 py-2 rounded-md ml-4 transition-colors duration-200" [disabled]="!puedeCrear" 
+        (click)="abrirModalCrear()">
+        <i class="fas fa-plus mr-2"></i>
+        Nuevo Usuario
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Tabla de Usuarios -->
+  <div class="bg-white rounded-lg shadow overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Correo</th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombres</th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Apellidos</th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rol</th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha Creación</th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Foto</th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <tr *ngFor="let usuario of usuariosPaginados()" class="hover:bg-gray-50 transition-colors duration-150">
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ usuario.id }}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ usuario.correo }}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ usuario.nombre }}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ usuario.apellido }}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ usuario.rol }}</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full" [ngClass]="{
+                    'bg-green-100 text-green-800': usuario.estado === 'Activo',
+                    'bg-red-100 text-red-800': usuario.estado === 'Inactivo',
+                    'bg-yellow-100 text-yellow-800': usuario.estado !== 'Activo' && usuario.estado !== 'Inactivo'
+                  }">
+              {{ usuario.estado }}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            {{ usuario.fechaCreacion | date:'dd/MM/yyyy' }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <img [src]="usuario.imagen "
+              class="h-10 w-10 rounded-full object-cover border" alt="Foto de perfil">
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            <div class="flex space-x-3">
+              <button class="text-blue-600 hover:text-blue-800 transition-colors duration-200" 
+                (click)="verUsuario(usuario)" [disabled]="!puedeVer" title="Ver detalles">
+                <i class="fa fa-eye"></i>
+              </button>
+              <button class="text-green-600 hover:text-green-800 transition-colors duration-200" 
+                (click)="abrirModalEditar(usuario)" [disabled]="!puedeEditar"
+                 title="Editar">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="text-red-600 hover:text-red-800 transition-colors duration-200" 
+                (click)="eliminarUsuarioLogico(usuario.id)" [disabled]="!puedeEliminar" title="Eliminar">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="usuarios.length === 0">
+          <td colspan="9" class="px-6 py-4 text-center text-sm text-gray-500">
+            No se encontraron usuarios
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Paginación -->
+  <div class="mt-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+    <div class="text-sm text-gray-700 ">
+      Mostrando {{ (paginaActual - 1) * elementosPorPagina + 1 }} -
+      {{ paginaActual * elementosPorPagina > usuarios.length ? usuarios.length : paginaActual * elementosPorPagina }}
+      de {{ usuarios.length }} registros
+    </div>
+
+    <div class="flex gap-2">
+      <button
+        class="bg-[#070826] hover:bg-blue-900   px-4 py-2 bg-gray-200 hover:bg-[#070826] text-gray-700 rounded-md transition-colors duration-200"
+        [disabled]="paginaActual === 1" (click)="paginaAnterior()"
+        [ngClass]="{'opacity-50 cursor-not-allowed': paginaActual === 1}">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+
+      <span class="px-4 py-2 bg-VerdeOscuro text-white rounded-md">
+        {{ paginaActual }}
+      </span>
+
+      <button class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md transition-colors duration-200"
+        [disabled]="paginaActual === totalPaginas()" (click)="paginaSiguiente()"
+        [ngClass]="{'opacity-50 cursor-not-allowed': paginaActual === totalPaginas()}">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <app-usuario-modal 
+  *ngIf="mostrarModal" 
+  [usuario]="usuarioSeleccionado" 
+  [modoVista]="modoVista"
+  (guardar)="guardarUsuario($event)" 
+   (cerrar)="cerrarModal()">
+  </app-usuario-modal>
+</div>

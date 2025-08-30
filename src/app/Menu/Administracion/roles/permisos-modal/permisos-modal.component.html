@@ -1,0 +1,105 @@
+<div class="fixed inset-0 flex items-center justify-center z-50">
+    <div class="absolute inset-0 bg-black opacity-50"></div>
+    <div
+        class="bg-white rounded-lg shadow-lg p-6 relative z-10 w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+        <span class="absolute top-0 right-0 p-4 cursor-pointer" (click)="cerrarModal()">&times;</span>
+        <h2 class="text-2xl font-bold mb-2">
+            Asignar Permisos - {{ rolNombre }}
+        </h2>
+
+        <div class="border-b border-gray-300 w-full mb-6"></div>
+
+        <div class="flex justify-between items-center mb-4">
+            <!-- Buscador -->
+            <div class="relative flex-grow">
+                <input type="text" placeholder="Buscar permisos"
+                    class="w-full pl-10 pr-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    [(ngModel)]="filtroPermiso" />
+                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+            </div>
+
+            <!-- Botones de selección -->
+            <div class="flex space-x-2 ml-4">
+                <button type="button" (click)="toggleSeleccionTodos(true)"
+                    class="px-3 py-1 text-xs border border-transparent rounded-md shadow-sm text-white bg-VerdeOscuro hover:bg-Verde focus:outline-none">
+                    Seleccionar todos
+                </button>
+                <button type="button" (click)="toggleSeleccionTodos(false)"
+                    class="px-3 py-1 text-xs border border-gray-300 rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
+                    Deseleccionar todos
+                </button>
+            </div>
+        </div>
+
+        <!-- Contador de selección -->
+        <div class="mb-2 text-sm text-gray-600">
+            {{ contarSeleccionados() }} permisos seleccionados
+        </div>
+
+        <!-- Lista de permisos agrupados por módulo -->
+        <div class="flex-grow overflow-y-auto mb-4">
+            <!-- Mostrar mensaje si no hay permisos que coincidan con el filtro -->
+            <div *ngIf="permisosFiltrados().length === 0" class="text-center py-4 text-gray-500">
+                No se encontraron permisos con ese criterio de búsqueda
+            </div>
+
+            <!-- Lista de módulos agrupados -->
+            <div *ngFor="let modulo of permisosAgrupados | keyvalue" class="mb-3 border rounded-lg overflow-hidden">
+                <!-- Cabecera del módulo (colapsable) -->
+                <div class="bg-gray-100 p-3 flex justify-between items-center cursor-pointer" (click)="toggleModulo(modulo.key)">
+                    <div class="flex items-center">
+                        <span class="font-medium">{{ modulo.key }}</span>
+                        <span class="ml-2 text-sm text-gray-500">({{ modulo.value.length }} permisos)</span>
+                    </div>
+                    <div class="flex items-center">
+                        <!-- Selector de todos los permisos del módulo -->
+                        <div class="mr-4 flex items-center" (click)="$event.stopPropagation()">
+                            <input type="checkbox" 
+                                   [checked]="estaTodoElModuloSeleccionado(modulo.key)"
+                                   [indeterminate]="tieneSeleccionParcial(modulo.key)"
+                                   (change)="toggleSeleccionModulo(modulo.key, $event)"
+                                   class="form-checkbox h-5 w-5 text-blue-600">
+                            <span class="ml-1 text-sm">Todos</span>
+                        </div>
+                        <!-- Icono de flecha -->
+                        <i class="fas" [ngClass]="modulosExpandidos[modulo.key] ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                    </div>
+                </div>
+                
+                <!-- Contenido del módulo (permisos) -->
+                <div *ngIf="modulosExpandidos[modulo.key]" class="p-2 bg-white">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        <div *ngFor="let permiso of filtrarPermisosPorModulo(modulo.key)" class="border rounded-md p-2 hover:bg-gray-50">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox" 
+                                       [(ngModel)]="permisosSeleccionados[permiso.id]"
+                                       class="form-checkbox h-5 w-5 text-blue-600">
+                                <span class="ml-2 text-sm">{{ obtenerNombreCortoPermiso(permiso.nombre) }}</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spinner de carga -->
+        <div *ngIf="cargando" class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+            <div class="bg-white p-4 rounded-lg shadow-lg">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#011552] mx-auto"></div>
+                <p class="mt-2 text-center">Procesando...</p>
+            </div>
+        </div>
+
+        <!-- Botones -->
+        <div class="flex justify-center mt-2 space-x-3">
+            <button type="button" (click)="cerrarModal()"
+                class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                Cancelar
+            </button>
+            <button type="button" (click)="guardarPermisos()" [disabled]="cargando"
+                class="px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-VerdeOscuro hover:bg-Verde focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                Guardar
+            </button>
+        </div>
+    </div>
+</div>

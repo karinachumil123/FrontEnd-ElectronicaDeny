@@ -1,0 +1,22 @@
+li.fa {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espacio entre icono y texto */
+}
+.menu-item {
+  display: flex;              /* Ícono y texto alineados horizontalmente */
+  align-items: center;        /* Centra verticalmente ícono y texto */
+  gap: 8px;                   /* Espacio entre el ícono y el texto */
+  font-family: Arial, sans-serif; /* Aplica la fuente Arial */
+  font-size: 14px;            /* Ajusta tamaño del texto */
+  cursor: pointer;
+}
+
+.menu-item a {
+  color: inherit;             /* Usa el mismo color del li */
+  text-decoration: none;      /* Quita el subrayado */
+}
+
+.menu-item:hover {
+  color: #007bff;             /* Cambia color al pasar el mouse */
+}

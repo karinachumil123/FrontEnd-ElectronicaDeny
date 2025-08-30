@@ -1,0 +1,295 @@
+<div class="fixed inset-0 flex items-center justify-center z-50">
+  <div class="absolute inset-0 bg-black opacity-50"></div>
+  <div class="bg-white rounded-lg shadow-lg p-6 relative z-10 w-full max-w-4xl">
+    <div class="max-h-[75vh] overflow-y-auto rounded-lg pr-2">
+
+    <span class="absolute top-0 right-0 p-4 cursor-pointer" (click)="cerrarModal()">&times;</span>
+    <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-left">
+      {{ modoVista ? 'Detalles del usuario' : usuario.Id ? 'Editar usuario' : 'Crear nuevo usuario' }}
+    </h2>
+
+    <form (ngSubmit)="!modoVista && onSubmit()" #usuarioForm="ngForm" novalidate>
+      <fieldset [disabled]="modoVista">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 ">
+          <!-- Nombre -->
+          <div class="mb-4">
+            <label for="nombre" 
+                  class="block text-sm font-medium mb-1 text-left text-Negro">
+              Nombre <span class="text-Negro">*</span>
+            </label>
+            <input
+        type="text"
+        id="nombre"
+        name="nombre"
+        maxlength="50"
+        pattern="^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$"
+        [(ngModel)]="usuario.Nombre"
+        #nombre="ngModel"
+        required
+        [class.bg-gray-100]="modoVista"
+        class="rounded w-full py-2 px-3 
+              text-VerdeOscuro 
+              border border-Verde 
+              focus:outline-none focus:border-VerdeClaro focus:ring-1 focus:ring-VerdeClaro"
+      />
+            <!-- Mensajes de error -->
+            <div *ngIf="nombre.invalid && (nombre.dirty || nombre.touched)" class="text-red-500 text-sm mt-1">
+              <div *ngIf="nombre.errors?.['required']">El nombre es obligatorio.</div>
+              <div *ngIf="nombre.errors?.['maxlength']">El nombre no debe exceder los 50 caracteres.</div>
+              <div *ngIf="nombre.errors?.['pattern']">Solo se permiten letras y espacios.</div>
+            </div>
+          </div>
+
+          <!-- Apellido -->
+          <div class="mb-4">
+            <label for="apellido" class="block text-sm font-medium mb-1 text-left text-Negro" >
+              Apellido <span class="text-Negro">*</span>
+            </label>
+            <input
+              type="text"
+              id="apellido"
+              name="apellido"
+              maxlength="50"
+              pattern="^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$"
+              [(ngModel)]="usuario.Apellido"
+              #apellido="ngModel"
+              required
+              [class.bg-gray-100]="modoVista"
+              class="rounded w-full py-2 px-3 
+              text-VerdeOscuro 
+              border border-Verde 
+              focus:outline-none focus:border-VerdeClaro focus:ring-1 focus:ring-VerdeClaro"
+            />
+          
+            <!-- Mensajes de error -->
+            <div *ngIf="apellido.invalid && (apellido.dirty || apellido.touched)" class="text-red-500 text-sm mt-1">
+              <div *ngIf="apellido.errors?.['required']">El apellido es obligatorio.</div>
+              <div *ngIf="apellido.errors?.['maxlength']">El apellido no debe exceder los 50 caracteres.</div>
+              <div *ngIf="apellido.errors?.['pattern']">Solo se permiten letras y espacios.</div>
+            </div>
+          </div>
+          
+          
+
+          <!-- Correo -->
+          <div class="mb-4">
+            <label for="correo" class="block text-sm font-medium mb-1 text-left text-Negro">
+              Correo electrónico <span class="text-Negro">*</span>
+            </label>
+            <input
+              type="email"
+              id="correo"
+              name="correo"
+              [(ngModel)]="usuario.Correo"
+              #correo="ngModel"
+              required
+              [class.bg-gray-100]="modoVista"
+              class="rounded w-full py-2 px-3 
+              text-VerdeOscuro 
+              border border-Verde 
+              focus:outline-none focus:border-VerdeClaro focus:ring-1 focus:ring-VerdeClaro"
+            />
+          
+            <!-- Mensajes de error -->
+            <div *ngIf="correo.invalid && (correo.dirty || correo.touched)" class="text-red-500 text-sm mt-1">
+              <div *ngIf="correo.errors?.['required']">El correo electrónico es obligatorio.</div>
+              <div *ngIf="correo.errors?.['email']">El formato del correo no es válido.</div>
+            </div>
+          </div>          
+          
+
+          <!-- Teléfono -->
+          <div class="mb-4">
+            <label for="correo" class="block text-sm font-medium mb-1 text-left text-Negro">
+              Teléfono <span class="text-Negro">*</span>
+            </label>
+            <input
+              type="tel"
+              id="telefono"
+              name="telefono"
+              [(ngModel)]="usuario.Telefono"
+              #telefono="ngModel"
+              required
+              pattern="^[0-9]{8}$"
+              maxlength="8"
+              inputmode="numeric"
+              [class.bg-gray-100]="modoVista"
+              class="rounded w-full py-2 px-3 
+              text-VerdeOscuro 
+              border border-Verde 
+              focus:outline-none focus:border-VerdeClaro focus:ring-1 focus:ring-VerdeClaro"
+            />
+
+            <!-- Mensajes de error -->
+            <div *ngIf="telefono.invalid && (telefono.dirty || telefono.touched)" class="text-red-500 text-sm mt-1">
+              <div *ngIf="telefono.errors?.['required']">El número de teléfono es obligatorio.</div>
+              <div *ngIf="telefono.errors?.['pattern']">Debe contener exactamente 8 dígitos numéricos.</div>
+            </div>
+          </div>
+          
+          
+          <!-- Fecha de nacimiento -->
+          <div class="mb-4">
+            <label for="fechaNacimiento" class="block text-sm font-medium mb-1 text-left text-Negro">
+              Fecha de nacimiento <span class="text-Negro">*</span>
+            </label>
+            <input
+              type="date"
+              id="fechaNacimiento"
+              name="fechaNacimiento"
+              [(ngModel)]="usuario.FechaNacimiento"
+              #fechaNacimiento="ngModel"
+              required
+              [min]="minFechaNacimiento" 
+              [max]="maxFechaNacimiento" 
+              (change)="calcularEdad()"
+              [class.bg-gray-100]="modoVista"
+              class="rounded w-full py-2 px-3 
+              text-VerdeOscuro 
+              border border-Verde 
+              focus:outline-none focus:border-VerdeClaro focus:ring-1 focus:ring-VerdeClaro"
+            />
+
+            <!-- Mensajes de error -->
+            <div *ngIf="fechaNacimiento.invalid && (fechaNacimiento.dirty || fechaNacimiento.touched)" class="text-red-500 text-sm mt-1">
+              <div *ngIf="fechaNacimiento.errors?.['required']">La fecha de nacimiento es obligatoria.</div>
+              <div *ngIf="fechaNacimiento.errors?.['min']">Debe ser mayor o igual a 01/01/1940.</div>
+              <div *ngIf="fechaNacimiento.errors?.['max']">La fecha no puede ser futura.</div>
+            </div>
+          </div>
+
+          <!-- Edad -->
+          <div class="mb-4">
+            <label for="edad" class="block text-sm font-medium mb-1 text-left text-Negro">
+              Edad
+            </label>
+            <input
+              type="text"
+              id="edad"
+              name="edad"
+              [value]="edad"
+              readonly
+              class="rounded w-full py-2 px-3 
+              text-VerdeOscuro 
+              border border-Verde 
+              focus:outline-none focus:border-VerdeClaro focus:ring-1 focus:ring-VerdeClaro
+              bg-gray-100 
+              cursor-not-allowed"
+            />
+          </div>
+          
+          <!-- Estado -->
+          <div class="mb-4">
+            <label for="estado" class="block text-sm font-medium mb-1 text-left text-Negro">
+              Estado<span class="text-Negro">*</span>
+            </label>
+            <div class="relative">
+              <select id="estado"
+                      [(ngModel)]="usuario.EstadoId"
+                      name="estado"
+                      required
+                      class="rounded w-full py-2 px-3 
+                      text-VerdeOscuro 
+                      border border-Verde 
+                      focus:outline-none 
+                      focus:border-VerdeClaro 
+                      focus:ring-1 
+                      focus:ring-VerdeClaro 
+                      appearance-none">
+                <option value="">Seleccione un estado</option>
+                <option *ngFor="let estado of estados"
+                        [ngValue]="estado.Id || estado.id">
+                  {{estado.Nombre || estado.nombre}}
+                </option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rol -->
+          <div class="mb-4">
+            <label for="rol" class="block text-sm font-medium mb-1 text-left text-Negro">
+              Rol<span class="text-Negro">*</span>
+            </label>
+            <div class="relative">
+              <select id="rol"
+                      [(ngModel)]="usuario.RolId"
+                      name="rol"
+                      required
+                      class="rounded w-full py-2 px-3 
+                      text-VerdeOscuro 
+                      border border-Verde 
+                      focus:outline-none 
+                      focus:border-VerdeClaro 
+                      focus:ring-1 
+                      focus:ring-VerdeClaro 
+                      appearance-none">
+                <option value="">Seleccione un rol</option>
+                <option *ngFor="let rol of roles"
+                        [ngValue]="rol.Id || rol.id">
+                  {{rol.Nombre || rol.nombre}}
+                </option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Imagen -->
+          <div class="mb-4 md:col-span-3">
+            <label class="block text-sm font-medium mb-1 text-left text-Negro">
+              Imagen del producto
+            </label>
+            <div class="mb-3" *ngIf="imagenPrevia">
+              <img [src]="imagenPrevia" alt="Vista previa de imagen"
+                class="h-24 w-24 object-cover rounded-lg border border-gray-200">
+            </div>
+            <div class="flex items-center" *ngIf="!modoVista">
+              <input type="file" id="fileInput" accept="image/jpeg, image/png" (change)="onFileSelected($event)"
+                class="hidden">
+              <button type="button" (click)="onFileInputClick()" [disabled]="cargando"
+                class="bg-VerdeOscuro hover:bg-Verde text-white font-medium py-2 px-4 rounded transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                <i class="fas fa-upload mr-2"></i>
+                <span *ngIf="!cargando">Seleccionar imagen</span>
+                <span *ngIf="cargando">Cargando...</span>
+              </button>
+              <!-- <span class="ml-3 text-sm text-gray-600" *ngIf="usuario.Imagen">
+                {{ usuario.Imagen }}
+              </span> -->
+            </div>
+            <p class="text-xs text-gray-500 mt-1">Formatos aceptados: JPG, PNG (Máx. 2MB)</p>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Spinner de carga (se muestra encima del modal) -->
+      <div *ngIf="cargando" class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+        <div class="bg-white p-4 rounded-lg shadow-lg">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#011552] mx-auto"></div>
+          <p class="mt-2 text-center">Procesando...</p>
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div class="flex justify-center mt-6 space-x-3">
+        <button type="button" (click)="cerrarModal()"
+          class="px-4 py-2 border border-gray-300 rounded-md text-white bg-[#B40001] hover:bg-[#9b0000] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+          {{ modoVista ? 'Cerrar' : 'Cancelar' }}
+        </button>
+
+        <button type="submit" *ngIf="!modoVista" [disabled]="!usuarioForm.form.valid || cargando"
+        class="px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-[#070826] hover:bg-VerdeOscuro focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
+          Guardar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+</div>

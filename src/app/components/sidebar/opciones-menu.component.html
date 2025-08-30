@@ -1,0 +1,116 @@
+<div class="flex flex-col min-h-screen">
+  <!-- Header -->
+  <header class="bg-VerdeOscuro text-white flex justify-between items-center px-4 py-2 flex-wrap shadow-md">
+    <div class="flex items-center gap-2">
+      <!-- Icono Home -->
+      <i 
+        class="fa fa-home text-2xl cursor-pointer hover:text-Verde transition" 
+        title="Ir a inicio"
+        (click)="goToInicio()">
+      </i>
+      <!-- Botón toggle del menú -->
+    <button 
+      class="ml-4 p-2 rounded-full shadow-lg text-white bg-transparent"
+      (click)="toggleMenu()">
+      <i class="fas" [ngClass]="menuVisible ? 'fa-times' : 'fa-bars'"></i>
+    </button>
+    </div>
+    <div class="flex items-center gap-2 mt-2 md:mt-0 relative" #dropdownContainer>
+  <div class="flex flex-col text-right text-sm md:text-base">
+    <span class="font-medium">
+      {{ (currentUser?.name || '') + ' ' + (currentUser?.apellido || '') || 'Invitado' }}
+    </span>
+    <span class="font-light">
+      {{ currentUser?.role || 'Sin rol' }}
+    </span>
+  </div>
+
+  <!-- Icono usuario -->
+  <img 
+  [src]="currentUser ? authService.getImageUrl(currentUser.imagen) : 'assets/images/default-user.png'" 
+  alt="Perfil" 
+  class="w-8 h-8 rounded-full cursor-pointer hover:ring-2 hover:ring-green-500 transition"
+  (click)="toggleUserMenu()"
+/>
+
+  <!-- Menú desplegable -->
+  <div
+    *ngIf="showMenu"
+    class="absolute right-0 top-10 bg-white shadow-lg rounded-lg w-40 py-2 z-50 border animate-fade-in"
+  >
+    <button
+      class="block w-full text-left px-4 py-2 text-VerdeOscuro hover:bg-gray-100 transition"
+      (click)="abrirPerfilUsuario()">
+      <i class="fa-solid fa-user mr-2"></i> Ver perfil
+    </button>
+    <button
+      class="block w-full text-left px-4 py-2 hover:bg-red-100 text-red-600 transition"
+      (click)="cerrarSesion()"
+    >
+      <i class="fa-solid fa-right-from-bracket mr-2"></i> Cerrar sesión
+    </button>
+  </div>
+</div>
+
+  </header>
+
+  <div class="flex flex-1 flex-col md:flex-row mt-3 ml-3">
+    <!-- Sidebar -->
+    <aside *ngIf="menuVisible" 
+    class="relative w-auto md:w-auto min-w-[140px] bg-VerdeOscuro text-white flex flex-col items-center p-4 rounded-2xl mb-3 md:mb-0 shadow-lg">
+
+      <img src="../../../assets/imagenes/ImagenMenu.png" alt="Logo" class="mb-4 w-[108px] h-[63px] object-contain">
+      <h2 class="text-lg font-semibold text-center">Electrónica Deny</h2>
+      <nav *ngIf="menuVisible || !isMobile" class="mt-6 flex flex-col gap-3 w-full">
+        <!-- Opciones caja -->
+        <li class="px-6 py-3 border-b border-VerdeClaro flex items-center cursor-pointer" (click)="toggleDropdown('caja')">
+          <span class="mr-2"><i class="fas fa-cash-register"></i></span> CAJA
+          <svg [class.rotate-180]="isDropdownOpen.caja" class="ml-auto h-4 w-4 transition-transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </li><ul *ngIf="isDropdownOpen.caja" class="pl-8">
+          <li class="py-2 cursor-pointer"><a routerLink="/home/caja/apertura-caja">Apertura de caja</a></li>
+          <li class="py-2 cursor-pointer"><a routerLink="/home/caja/cierre-caja">Cierre de caja</a></li>   </ul>  
+
+        <!-- Menú desplegable Administración -->
+        <li class="px-6 py-3 border-b border-VerdeClaro flex items-center cursor-pointer"(click)="toggleDropdown('administracion')">
+          <span class="mr-2"><i class="fas fa-cogs"></i></span> ADMINISTRACIÓN
+          <svg [class.rotate-180]="isDropdownOpen.administracion" class="ml-auto h-4 w-4 transition-transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"  fill="currentColor">  
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />  
+        </svg></li>
+
+          <ul *ngIf="isDropdownOpen.administracion" class="pl-8 submenu">
+            <li><a routerLink="/home/administracion/usuarios" class="submenu-item"><i class="fa fa-users"></i> Usuarios</a></li>
+            <li><a routerLink="/home/administracion/contacto" class="submenu-item"><i class="fa fa-address-book"></i> Contacto</a></li>
+            <li><a routerLink="/home/administracion/roles" class="submenu-item"> <i class="fa fa-user-shield"></i> Roles </a></li>
+          </ul>
+
+          <!-- Menú desplegable Reportes -->
+          <li class="px-6 py-3 border-b border-VerdeClaro flex items-center cursor-pointer" (click)="toggleDropdown('reportes')">
+            <span class="mr-2"><i class="fas fa-cogs"></i></span> REPORTES
+            <svg [class.rotate-180]="isDropdownOpen.reportes" class="ml-auto h-4 w-4 transition-transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+            </svg></li>
+          <ul *ngIf="isDropdownOpen.reportes" class="pl-8">
+            <li><a routerLink="/home/reportes/usuarios" class="submenu-item"><i class="fa fa-users"></i> Usuarios</a></li>
+            <li><a routerLink="/home/reportes/ventas" class="submenu-item"><i class="fa fa-chart-line"></i> Ventas</a></li>
+            <li><a routerLink="/home/reportes/pedidos" class="submenu-item"><i class="fa fa-shopping-cart"></i> Pedidos</a></li>
+            <li><a routerLink="/home/reportes/inventario" class="submenu-item"> <i class="fa fa-boxes"></i> Inventario </a></li>
+          </ul>
+
+      </nav>
+    </aside>  
+
+    <!-- Contenido dinámico -->
+    <main class="flex-1 p-6 bg-white overflow-auto">
+      <router-outlet></router-outlet>
+    </main>
+  </div> <br>
+
+  <!-- Footer 
+  <footer class="bg-VerdeOscuro text-white flex justify-center items-center gap-4 py-1.5 mt-3 flex-wrap">
+    <i class="fas fa-map-marker-alt text-xl cursor-pointer"></i>
+    <i class="fab fa-facebook text-xl cursor-pointer"></i>
+    <i class="fab fa-whatsapp text-xl cursor-pointer"></i>
+  </footer>-->
+</div>

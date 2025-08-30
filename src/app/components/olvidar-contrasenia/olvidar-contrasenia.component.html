@@ -1,0 +1,22 @@
+<!-- Modal de olvido de contraseña -->
+<div class="absolute inset-0 bg-black opacity-50"></div>
+<div class="fixed inset-0 flex items-center justify-center z-50 " style="background-color: rgba(0, 0, 0, 0.50);">
+    <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
+        <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-left">Recuperar Contraseña</h2>
+        <div class="grid grid-cols-1 gap-4">
+            <div>
+                <label class="block font-semibold mb-1 text-left">Correo electrónico*</label>
+                <input type="email"
+                    class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Ingresa tu correo" />
+            </div>
+        </div>
+        <div class="mt-4 flex justify-start gap-2">
+            <button class="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-700">Enviar</button>
+            <button (click)="cerrarModal()"
+                class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500">Cancelar</button>
+
+        </div>
+
+    </div>
+</div>
